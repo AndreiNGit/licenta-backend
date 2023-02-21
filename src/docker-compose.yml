@@ -1,0 +1,28 @@
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=app
+    ports:
+      - "5432:5432"
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+    container_name: postgresql-db
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: always
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=test@test.ro
+      - PGADMIN_DEFAULT_PASSWORD=pass
+    ports:
+      - 80:80
+      - 443:443
+    depends_on:
+      - db
+    container_name: pgadmin4
+
+volumes:
+  dbdata:
