@@ -1,6 +1,7 @@
 package com.licenta.user;
 
 import com.licenta.stock.Stock;
+import com.licenta.utils.UserType;
 import jakarta.persistence.*;
 
 import java.util.Objects;
@@ -15,7 +16,8 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private boolean isAdmin;
+    @Enumerated(EnumType.STRING)
+    private UserType userType;
 
     @ManyToMany
     @JoinTable(
@@ -25,12 +27,13 @@ public class User {
     )
     private Set<Stock> favoriteStocks;
 
-    public User(int id, String username, String email, String password, boolean isAdmin) {
+    public User(int id, String username, String email, String password, UserType userType, Set<Stock> favoriteStocks) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.password = password;
-        this.isAdmin = isAdmin;
+        this.userType = userType;
+        this.favoriteStocks = favoriteStocks;
     }
 
     public User() {
@@ -68,12 +71,33 @@ public class User {
         this.password = password;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
+    public UserType getUserType() {
+        return userType;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
+
+    public Set<Stock> getFavoriteStocks() {
+        return favoriteStocks;
+    }
+
+    public void setFavoriteStocks(Set<Stock> favoriteStocks) {
+        this.favoriteStocks = favoriteStocks;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && userType == user.userType && Objects.equals(favoriteStocks, user.favoriteStocks);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, email, password, userType, favoriteStocks);
     }
 
     @Override
@@ -83,20 +107,8 @@ public class User {
                 ", username='" + username + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", isAdmin=" + isAdmin +
+                ", userType=" + userType +
+                ", favoriteStocks=" + favoriteStocks +
                 '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return id == user.id && isAdmin == user.isAdmin && Objects.equals(username, user.username) && Objects.equals(email, user.email) && Objects.equals(password, user.password);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, username, email, password, isAdmin);
     }
 }
